@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atrial Fibrillation Quiz</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a3a8f 0%, #0c7bb3 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .quiz-container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .quiz-header {
+            padding: 1.5rem;
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        
+        h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        .questions-container {
+            overflow-y: auto;
+            padding: 1rem;
+            flex-grow: 1;
+        }
+        
+        .question {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            border-left: 5px solid #3498db;
+        }
+        
+        .question-text {
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+        
+        .options-list {
+            list-style-type: none;
+        }
+        
+        .option {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .option:hover {
+            background-color: #f0f7ff;
+            border-color: #a0c5ff;
+        }
+        
+        label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        input[type="radio"] {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+        }
+        
+        .submit-all-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 1rem;
+            border-radius: 8px;
+        }
+        
+        .submit-all-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .result {
+            padding: 2rem;
+            display: none;
+        }
+        
+        .result h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .action-btn {
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            margin: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .save-btn {
+            background-color: #27ae60;
+        }
+        
+        .save-btn:hover {
+            background-color: #219653;
+        }
+        
+        .close-btn {
+            background-color: #7f8c8d;
+        }
+        
+        .close-btn:hover {
+            background-color: #6c7a7a;
+        }
+        
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .score-container {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+        
+        .score {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #2c3e50;
+        }
+        
+        .report-item {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            border-left: 5px solid #3498db;
+        }
+        
+        .report-question {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+        
+        .report-answer {
+            margin: 5px 0;
+            padding-left: 1rem;
+        }
+        
+        .report-explanation {
+            margin-top: 0.5rem;
+            padding: 0.8rem;
+            background-color: #e8f4ff;
+            border-radius: 5px;
+            font-style: italic;
+        }
+        
+        .correct {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        .incorrect {
+            color: #c0392b;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .quiz-container {
+                width: 95%;
+            }
+            
+            .quiz-header, .questions-container, .result {
+                padding: 1rem;
+            }
+            
+            .btn-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .action-btn {
+                width: 80%;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <h2>Atrial Fibrillation Quiz</h2>
+            <div class="question-counter" id="question-counter">5 Questions</div>
+        </div>
+        
+        <div class="questions-container" id="questions-container">
+            <!-- Questions will be inserted here -->
+        </div>
+        
+        <button class="submit-all-btn" id="submit-all-btn">Submit All Answers</button>
+        
+        <div class="result" id="result">
+            <h2>Atrial Fibrillation Quiz Results</h2>
+            <div class="score-container">
+                Your score: <span class="score" id="score">0</span>/<span id="total-questions">5</span>
+            </div>
+            <div id="report-container">
+                <!-- Report will be generated here -->
+            </div>
+            <div class="btn-container">
+                <button class="action-btn save-btn" id="save-btn">Save Report</button>
+                <button class="action-btn close-btn" id="close-btn">Close Report</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                type: "radio",
+                question: "What is atrial fibrillation (AFib)?",
+                options: [
+                    "A type of heart arrhythmia where the atria beat irregularly",
+                    "A condition where the heart stops beating", 
+                    "A type of heart valve disease",
+                    "A condition where the heart beats too slowly"
+                ],
+                answer: "A type of heart arrhythmia where the atria beat irregularly",
+                explanation: "Atrial fibrillation is an irregular and often rapid heart rate that occurs when the two upper chambers of your heart experience chaotic electrical signals."
+            },
+            {
+                type: "radio",
+                question: "Which of the following is a common symptom of AFib?",
+                options: [
+                    "Chest pain",
+                    "Irregular heartbeat", 
+                    "Skin rash",
+                    "Blurred vision"
+                ],
+                answer: "Irregular heartbeat",
+                explanation: "The most common symptom of AFib is palpitations or the sensation of an irregular heartbeat. Some people may also experience fatigue, shortness of breath, or dizziness."
+            },
+            {
+                type: "radio",
+                question: "Which medication is commonly used to control heart rate in AFib patients?",
+                options: [
+                    "Beta-blockers",
+                    "Antibiotics", 
+                    "Statins",
+                    "Insulin"
+                ],
+                answer: "Beta-blockers",
+                explanation: "Beta-blockers are commonly prescribed to control heart rate in AFib patients. Other rate control medications include calcium channel blockers and digoxin."
+            },
+            {
+                type: "radio",
+                question: "What is a major risk associated with untreated AFib?",
+                options: [
+                    "Stroke",
+                    "Diabetes", 
+                    "Liver disease",
+                    "Kidney failure"
+                ],
+                answer: "Stroke",
+                explanation: "AFib increases the risk of stroke by 5 times because blood can pool and form clots in the fibrillating atria, which can then travel to the brain."
+            },
+            {
+                type: "radio",
+                question: "Which procedure uses catheters to destroy small areas of heart tissue causing AFib?",
+                options: [
+                    "Cardiac ablation",
+                    "Angioplasty", 
+                    "Bypass surgery",
+                    "Valve replacement"
+                ],
+                answer: "Cardiac ablation",
+                explanation: "Cardiac ablation is a procedure that uses radiofrequency energy or freezing to destroy small areas of heart tissue that are causing abnormal heart rhythms."
+            }
+        ];
+
+        let userAnswers = new Array(questions.length).fill(null);
+        
+        const questionsContainer = document.getElementById('questions-container');
+        const submitAllBtn = document.getElementById('submit-all-btn');
+        const result = document.getElementById('result');
+        const scoreElement = document.getElementById('score');
+        const totalQuestionsElement = document.getElementById('total-questions');
+        const reportContainer = document.getElementById('report-container');
+        const saveBtn = document.getElementById('save-btn');
+        const closeBtn = document.getElementById('close-btn');
+
+        function loadQuestions() {
+            questions.forEach((q, index) => {
+                const questionElement = document.createElement('div');
+                questionElement.className = 'question';
+                questionElement.innerHTML = `
+                    <div class="question-text">${index + 1}. ${q.question}</div>
+                    <ul class="options-list" id="options-${index}">
+                    </ul>
+                `;
+                
+                questionsContainer.appendChild(questionElement);
+                
+                const optionsList = document.getElementById(`options-${index}`);
+                
+                q.options.forEach((option, optionIndex) => {
+                    const li = document.createElement('li');
+                    li.className = 'option';
+                    
+                    const input = document.createElement('input');
+                    input.type = q.type;
+                    input.name = `quiz-option-${index}`;
+                    input.value = option;
+                    input.id = `option-${index}-${optionIndex}`;
+                    input.addEventListener('change', () => {
+                        userAnswers[index] = option;
+                    });
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = `option-${index}-${optionIndex}`;
+                    label.textContent = option;
+                    
+                    li.appendChild(input);
+                    li.appendChild(label);
+                    optionsList.appendChild(li);
+                });
+            });
+            
+            totalQuestionsElement.textContent = questions.length;
+        }
+
+        function generateReport() {
+            // Calculate score
+            let score = 0;
+            userAnswers.forEach((userAnswer, index) => {
+                const correctAnswer = questions[index].answer;
+                if (userAnswer === correctAnswer) {
+                    score++;
+                }
+            });
+            
+            // Update score display
+            scoreElement.textContent = score;
+            
+            // Generate report
+            reportContainer.innerHTML = '';
+            questions.forEach((question, index) => {
+                const userAnswer = userAnswers[index];
+                const correctAnswer = question.answer;
+                
+                const reportItem = document.createElement('div');
+                reportItem.className = 'report-item';
+                
+                const questionText = document.createElement('div');
+                questionText.className = 'report-question';
+                questionText.textContent = `${index + 1}. ${question.question}`;
+                reportItem.appendChild(questionText);
+                
+                const yourAnswer = document.createElement('div');
+                yourAnswer.className = 'report-answer';
+                yourAnswer.innerHTML = `<strong>Your answer:</strong> ${userAnswer || 'No answer'}`;
+                
+                // Check if answer is correct
+                const isCorrect = userAnswer === correctAnswer;
+                
+                if (isCorrect) {
+                    yourAnswer.innerHTML += ' <span class="correct">✓ Correct</span>';
+                } else {
+                    yourAnswer.innerHTML += ' <span class="incorrect">✗ Incorrect</span>';
+                }
+                
+                reportItem.appendChild(yourAnswer);
+                
+                const correctAnswerElement = document.createElement('div');
+                correctAnswerElement.className = 'report-answer';
+                correctAnswerElement.innerHTML = `<strong>Correct answer:</strong> ${correctAnswer}`;
+                reportItem.appendChild(correctAnswerElement);
+                
+                const explanationElement = document.createElement('div');
+                explanationElement.className = 'report-explanation';
+                explanationElement.innerHTML = `<strong>Explanation:</strong> ${question.explanation}`;
+                reportItem.appendChild(explanationElement);
+                
+                reportContainer.appendChild(reportItem);
+            });
+            
+            // Show result section
+            questionsContainer.style.display = 'none';
+            submitAllBtn.style.display = 'none';
+            result.style.display = 'block';
+        }
+
+        submitAllBtn.addEventListener('click', () => {
+            // Check if all questions are answered
+            const allAnswered = userAnswers.every(answer => answer !== null);
+            
+            if (!allAnswered) {
+                alert('Please answer all questions before submitting.');
+                return;
+            }
+            
+            // Generate report
+            generateReport();
+        });
+
+        saveBtn.addEventListener('click', () => {
+            alert('Report saved successfully!');
+        });
+
+        closeBtn.addEventListener('click', () => {
+            alert('Thank you for completing the quiz!');
+        });
+
+        // Initialize the quiz
+        loadQuestions();
+    </script>
+</body>
+</html>
